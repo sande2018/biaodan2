@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}创建表单 - 在线报名系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1>创建新表单</h1>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="form_name" class="form-label">表单名称</label>
+                <input type="text" class="form-control" id="form_name" name="form_name" required>
+            </div>
+            <div class="mb-3">
+                <label for="form_slug" class="form-label">表单标识 (Slug)</label>
+                <input type="text" class="form-control" id="form_slug" name="form_slug" required placeholder="只能包含字母、数字和下划线">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">表单描述</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="is_active" name="is_active" checked>
+                <label class="form-check-label" for="is_active">启用表单</label>
+            </div>
+            
+            <hr class="my-4">
+            <h5>CDK奖励设置</h5>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="cdk_enabled" name="cdk_enabled">
+                <label class="form-check-label" for="cdk_enabled">启用CDK奖励</label>
+            </div>
+            <div class="mb-3">
+                <label for="cdk_stock" class="form-label">CDK库存数量</label>
+                <input type="number" class="form-control" id="cdk_stock" name="cdk_stock" min="0" value="0">
+            </div>
+            <div class="mb-3">
+                <label for="cdk_description" class="form-label">兑奖说明</label>
+                <textarea class="form-control" id="cdk_description" name="cdk_description" rows="3"></textarea>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="cdk_popup" name="cdk_popup">
+                <label class="form-check-label" for="cdk_popup">打开表单时显示鼓励提示</label>
+            </div>
+            
+            <hr class="my-4">
+            <h5>IP限制设置</h5>
+            <div class="mb-3">
+                <label for="ip_limit" class="form-label">单IP最大提交次数 (0表示无限制)</label>
+                <input type="number" class="form-control" id="ip_limit" name="ip_limit" min="0" value="0">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">创建表单</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

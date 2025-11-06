@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 在线报名系统{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">欢迎使用在线报名系统</h1>
+    <p class="lead">快速创建和管理各种报名表单</p>
+    <hr class="my-4">
+    <p>支持多种表单字段类型，实时填写进度条，CDK奖励功能，IP限制等</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('admin_dashboard') }}" role="button">进入管理后台</a>
+</div>
+{% endblock %}

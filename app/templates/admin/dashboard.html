@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}管理后台 - 在线报名系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>表单管理</h1>
+    <a href="{{ url_for('create_form') }}" class="btn btn-primary">创建新表单</a>
+</div>
+
+<div class="row">
+    {% for form in forms %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ form.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Slug: {{ form.slug }}</h6>
+                <p class="card-text">{{ form.description[:100] }}{% if form.description|length > 100 %}...{% endif %}</p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        创建时间: {{ form.created_at.strftime('%Y-%m-%d %H:%M') }}<br>
+                        状态: {% if form.is_active %}<span class="text-success">启用</span>{% else %}<span class="text-danger">禁用</span>{% endif %}<br>
+                        CDK: {% if form.cdk_enabled %}<span class="text-success">启用</span> (库存: {{ form.cdk_stock }}){% else %}<span class="text-muted">禁用</span>{% endif %}<br>
+                        IP限制: {% if form.ip_limit > 0 %}{{ form.ip_limit }}次{% else %}无限制{% endif %}
+                    </small>
+                </p>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('manage_form_fields', form_id=form.id) }}" class="btn btn-sm btn-primary">管理字段</a>
+                    <a href="{{ url_for('view_submissions', form_id=form.id) }}" class="btn btn-sm btn-info">查看提交</a>
+                    <a href="{{ url_for('fill_form', slug=form.slug) }}" class="btn btn-sm btn-success" target="_blank">预览</a>
+                    <form method="POST" action="{{ url_for('delete_form', form_id=form.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('确定要删除这个表单吗？')">删除</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
