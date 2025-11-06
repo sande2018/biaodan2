@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}服务器错误 - 在线报名系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2 text-center">
+        <h1 class="display-1">500</h1>
+        <h2>服务器错误</h2>
+        <p class="lead">服务器遇到了意外的错误，请稍后重试。</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">返回首页</a>
+    </div>
+</div>
+{% endblock %}

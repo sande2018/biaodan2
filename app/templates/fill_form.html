@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}{{ form.name }} - 在线报名系统{% endblock %}
+
+{% block extra_css %}
+<style>
+    .progress {
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1>{{ form.name }}</h1>
+        {% if form.description %}
+            <p class="lead mb-4">{{ form.description }}</p>
+        {% endif %}
+        
+        <!-- 填写进度条 -->
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progressBar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+        </div>
+        
+        <form method="POST" id="registrationForm">
+            {% for field in fields %}
+                <div class="mb-3">
+                    <label for="{{ field.name }}" class="form-label">
+                        {{ field.label }}
+                        {% if field.required %}<span class="text-danger">*</span>{% endif %}
+                    </label>
+                    
+                    {% if field.type == 'text' %}
+                        <input type="text" class="form-control" id="{{ field.name }}" name="{{ field.name }}" placeholder="{{ field.placeholder or '' }}" {% if field.required %}required{% endif %}>
+                    {% elif field.type == 'email' %}
+                        <input type="email" class="form-control" id="{{ field.name }}" name="{{ field.name }}" placeholder="{{ field.placeholder or '' }}" {% if field.required %}required{% endif %}>
+                    {% elif field.type == 'phone' %}
+                        <input type="tel" class="form-control" id="{{ field.name }}" name="{{ field.name }}" placeholder="{{ field.placeholder or '' }}" {% if field.required %}required{% endif %}>
+                    {% elif field.type == 'select' %}
+                        <select class="form-select" id="{{ field.name }}" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                            <option value="">请选择</option>
+                            {% for option in field.options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                    {% elif field.type == 'radio' %}
+                        {% for option in field.options %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="{{ field.name }}" id="{{ field.name }}_{{ loop.index }}" value="{{ option }}" {% if field.required %}required{% endif %}>
+                                <label class="form-check-label" for="{{ field.name }}_{{ loop.index }}">
+                                    {{ option }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    {% elif field.type == 'checkbox' %}
+                        {% for option in field.options %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="{{ field.name }}" id="{{ field.name }}_{{ loop.index }}" value="{{ option }}">
+                                <label class="form-check-label" for="{{ field.name }}_{{ loop.index }}">
+                                    {{ option }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    {% elif field.type == 'textarea' %}
+                        <textarea class="form-control" id="{{ field.name }}" name="{{ field.name }}" rows="4" placeholder="{{ field.placeholder or '' }}" {% if field.required %}required{% endif %}></textarea>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn btn-primary btn-lg">提交表单</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 实时计算填写进度
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registrationForm');
+        const progressBar = document.getElementById('progressBar');
+        
+        // 获取所有需要填写的字段
+        const fields = form.querySelectorAll('input[required], select[required], textarea[required]');
+        const totalFields = fields.length;
+        
+        function updateProgress() {
+            let filledFields = 0;
+            
+            fields.forEach(field => {
+                if (field.type === 'radio') {
+                    // 检查radio组是否有选中
+                    const radioGroup = form.querySelectorAll(`input[name="${field.name}"]`);
+                    for (const radio of radioGroup) {
+                        if (radio.checked) {
+                            filledFields++;
+                            return;
+                        }
+                    }
+                } else if (field.type === 'checkbox') {
+                    // checkbox不单独计算，除非是必填的单个复选框
+                    // 这里简化处理，只计算其他类型
+                } else {
+                    if (field.value.trim() !== '') {
+                        filledFields++;
+                    }
+                }
+            });
+            
+            // 处理复选框组
+            const checkboxGroups = {};
+            form.querySelectorAll('input[type="checkbox"][required]').forEach(checkbox => {
+                const name = checkbox.name;
+                if (!checkboxGroups[name]) {
+                    checkboxGroups[name] = [];
+                }
+                checkboxGroups[name].push(checkbox);
+            });
+            
+            for (const groupName in checkboxGroups) {
+                const group = checkboxGroups[groupName];
+                for (const checkbox of group) {
+                    if (checkbox.checked) {
+                        filledFields++;
+                        break;
+                    }
+                }
+            }
+            
+            const progress = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            progressBar.style.width = progress + '%';
+            progressBar.setAttribute('aria-valuenow', progress);
+            progressBar.textContent = progress + '%';
+        }
+        
+        // 监听所有字段的变化
+        form.addEventListener('input', updateProgress);
+        form.addEventListener('change', updateProgress);
+        
+        // 初始计算
+        updateProgress();
+    });
+    
+    // CDK弹窗提示
+    {% if form.cdk_enabled and form.cdk_popup %}
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                alert('{{ form.cdk_description }}');
+            }, 1000);
+        });
+    {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}提交成功 - 在线报名系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2 text-center">
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">表单提交成功！</h4>
+            <p>感谢您的参与，我们已经收到了您的报名信息。</p>
+            <hr>
+            
+            {% if cdk %}
+                <div class="mt-4">
+                    <h5>恭喜您获得CDK奖励！</h5>
+                    <div class="alert alert-info d-inline-block p-3 mt-2">
+                        <strong>您的CDK：{{ cdk.code }}</strong>
+                    </div>
+                    <p class="mt-3">
+                        {{ form.cdk_description }}
+                    </p>
+                </div>
+            {% endif %}
+            
+            <p class="mb-0 mt-3">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">返回首页</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

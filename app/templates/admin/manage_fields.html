@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}管理表单字段 - 在线报名系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>管理表单字段 - {{ form.name }}</h1>
+            <div>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary me-2">返回仪表盘</a>
+                <a href="{{ url_for('fill_form', slug=form.slug) }}" class="btn btn-success" target="_blank">预览表单</a>
+            </div>
+        </div>
+        
+        <!-- 创建字段表单 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                添加新字段
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="field_name" class="form-label">字段名称</label>
+                                <input type="text" class="form-control" id="field_name" name="field_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="field_label" class="form-label">字段标签</label>
+                                <input type="text" class="form-control" id="field_label" name="field_label" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="field_type" class="form-label">字段类型</label>
+                                <select class="form-select" id="field_type" name="field_type" required>
+                                    <option value="text">文本框</option>
+                                    <option value="email">邮箱</option>
+                                    <option value="phone">电话</option>
+                                    <option value="select">下拉选择</option>
+                                    <option value="radio">单选按钮</option>
+                                    <option value="checkbox">复选框</option>
+                                    <option value="textarea">多行文本</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="field_order" class="form-label">显示顺序</label>
+                                <input type="number" class="form-control" id="field_order" name="field_order" min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="field_required" name="field_required">
+                                    <label class="form-check-label" for="field_required">必填字段</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="field_placeholder" class="form-label">占位符</label>
+                        <input type="text" class="form-control" id="field_placeholder" name="field_placeholder">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="field_options" class="form-label">选项 (每行一个，适用于下拉、单选、复选框)</label>
+                        <textarea class="form-control" id="field_options" name="field_options" rows="3" placeholder="选项1
+选项2
+选项3"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="validation_rules" class="form-label">验证规则 (JSON格式)</label>
+                        <textarea class="form-control" id="validation_rules" name="validation_rules" rows="2" placeholder='{"min_length": 2, "max_length": 50}'></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">添加字段</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 字段列表 -->
+        <div class="card">
+            <div class="card-header">
+                现有字段
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>顺序</th>
+                                <th>名称</th>
+                                <th>标签</th>
+                                <th>类型</th>
+                                <th>必填</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for field in fields %}
+                                <tr>
+                                    <td>{{ field.order }}</td>
+                                    <td>{{ field.name }}</td>
+                                    <td>{{ field.label }}</td>
+                                    <td>{{ field.type }}</td>
+                                    <td>{% if field.required %}是{% else %}否{% endif %}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('delete_field', field_id=field.id) }}" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('确定要删除这个字段吗？')">删除</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
